@@ -101,7 +101,7 @@ pub fn main() !void {
 /// Then, if you pass -Dupdate the build script will only do the updating and not error on missing dependencies in the rest of the build script!
 pub fn updateDependencies(b: *std.Build, dependencies: []const GitDependency, options: std.Build.ExecutableOptions) bool {
     var opts = options;
-    const dep = b.dependency("update", .{
+    const dep = b.dependency("update_tool", .{
         // .optimize = opts.optimize,
         // .target = opts.target,
     });
