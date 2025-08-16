@@ -71,30 +71,6 @@ pub fn exec(alloc: Allocator, args: []const []const u8) ![]const u8 {
         return stdout.items;
     }
 }
-/// the name in options will be added as build option
-/// i.e. "update" -> zig build -Dupdate will trigger the update binary
-/// if you want to update the Update itself with every invokation, add it to the list of GitDependencies
-///
-/// you have to wrap this function in a guard clause like
-/// if (updateDependencies(...)) return;
-/// in your build.zig file and place it at the top of you build fn!
-/// Then, if you pass -Dupdate the build script will only do the updating and not error on missing dependencies in the rest of the build script!
-pub fn updateDependencies(b: *std.Build, dependencies: []const GitDependency, options: std.Build.ExecutableOptions) bool {
-    var opts = options;
-    opts.root_source_file = b.path("update.zig");
-    const build_exe = b.addExecutable(opts);
-    const run_step = b.addRunArtifact(build_exe);
-    for (dependencies) |d| {
-        run_step.addArg(d.url);
-        run_step.addArg(d.branch);
-    }
-    run_step.step.dependOn(&build_exe.step);
-    const update = if (b.option(bool, opts.name, "breaks the build script and updates dependencies")) |x| x else false;
-    if (update) {
-        b.getInstallStep().dependOn(&run_step.step);
-    }
-    return update;
-}
 pub fn main() !void {
     var gpa = std.heap.DebugAllocator(.{}).init;
     defer _ = gpa.deinit();
@@ -113,4 +89,33 @@ pub fn main() !void {
         try deps.append(d);
     }
     try update_dependency(alloc, deps.items);
+}
+
+/// the name in options will be added as build option
+/// i.e. "update" -> zig build -Dupdate will trigger the update binary
+/// if you want to update the Update itself with every invokation, add it to the list of GitDependencies
+///
+/// you have to wrap this function in a guard clause like
+/// if (updateDependencies(...)) return;
+/// in your build.zig file and place it at the top of you build fn!
+/// Then, if you pass -Dupdate the build script will only do the updating and not error on missing dependencies in the rest of the build script!
+pub fn updateDependencies(b: *std.Build, dependencies: []const GitDependency, options: std.Build.ExecutableOptions) bool {
+    var opts = options;
+    const dep = b.dependency("update", .{
+        // .optimize = opts.optimize,
+        // .target = opts.target,
+    });
+    opts.root_source_file = dep.path("src/update.zig");
+    const build_exe = b.addExecutable(opts);
+    const run_step = b.addRunArtifact(build_exe);
+    for (dependencies) |d| {
+        run_step.addArg(d.url);
+        run_step.addArg(d.branch);
+    }
+    run_step.step.dependOn(&build_exe.step);
+    const upd = if (b.option(bool, opts.name, "breaks the build script and updates dependencies")) |x| x else false;
+    if (upd) {
+        b.getInstallStep().dependOn(&run_step.step);
+    }
+    return upd;
 }

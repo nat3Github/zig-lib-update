@@ -1,15 +1,9 @@
 const std = @import("std");
-pub const update = @import("update.zig");
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-    _ = .{ target, optimize };
-    // if (update.updateDependencies(b, xdeps, .{
-    //     .name = "update",
-    //     .optimize = optimize,
-    //     .target = target,
-    // })) return;
-}
+pub const update = @import("src/update.zig");
+pub const GitDependency = update.GitDependency;
+pub const updateDependencies = update.updateDependencies;
+
+pub fn build(_: *std.Build) void {}
 
 test "test all refs" {
     std.testing.refAllDeclsRecursive(@This());
