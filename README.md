@@ -20,7 +20,7 @@
 const update = @import("update_tool");
 const deps: []const update.GitDependency = &.{
     .{
-        // update self
+        // if you leave this the update_tool will update itself 
         .url = "https://github.com/nat3Github/zig-lib-update",
         .branch = "main",
     },
