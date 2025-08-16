@@ -47,4 +47,4 @@ pub fn build(b: *std.Build) void {
 3. run `zig build -Dupdate` to invoke the update tool
 
 # Usage
-this is licensed Public Domain or BSD-0 or MIT. Use it how you like!
+this is licensed Public Domain or BSD-0 or MIT. Use it to your liking!
