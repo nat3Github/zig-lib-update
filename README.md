@@ -48,3 +48,8 @@ pub fn build(b: *std.Build) void {
 
 # Usage
 this is licensed Public Domain or BSD-0 or MIT. Use it to your liking!
+
+# Performance
+- it gets slow with a lot of dependencies
+- this is due to zig fetch --save being slow
+- i hope this gets improved on in future zig versions
