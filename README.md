@@ -1,6 +1,6 @@
 # update tool - a zig dependency update tool for your remote git dependencies
 - i hate searching for the right commit hash and manually calling zig fetch --save git+...#aEfowkjdfwfd..
-- this lib called `update_tool` gets the hash from the specified branch and runs zig fetch --save
+- this lib called `update_tool` gets the hash from your specified branch and runs zig fetch --save
 
 # automatic test steps
 - with `addTestFolder` all zig files in the specified folder get added as test steps
