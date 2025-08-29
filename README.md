@@ -1,9 +1,11 @@
 # update tool - a zig dependency update tool for your remote git dependencies
 - i hate searching for the right commit hash and manually calling zig fetch --save git+...#aEfowkjdfwfd..
-- this is why i created this lib called update_tool
-- it gets the right hash from the specified branch and runs zig fetch --save
+- this lib called `update_tool` gets the hash from the specified branch and runs zig fetch --save
 
-# Example
+# automatic test steps
+- with `addTestFolder` all zig files in the specified folder get added as test steps
+
+# Example Updating Git Dependencies
 1. in build.zig.zon you add:
 ```zig
     .dependencies = .{
@@ -46,8 +48,39 @@ pub fn build(b: *std.Build) void {
 
 3. run `zig build -Dupdate` to invoke the update tool
 
+# Example Adding Tests
+
+1. in build.zig you define your test folder:
+```zig
+const update = @import("update_tool");
+
+pub fn build(b: *std.Build) void {
+    const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
+    ...
+    try update.addTestFolder(
+        b,
+        // this is the folder path (from build root)
+        "tests",
+        optimize,
+        target,
+        // add modules that are used in the tests
+        &.{
+            .{ .name = "my-module", .mod = my_module_i_want_to_test },
+        },
+        // this is the prefix- for the tests
+        "testprefix",
+    );
+```
+2.
+```
+add a new file (first-test.zig) to the test folder
+run `zig build testprefix-first-test.zig` to run the tests in first-test.zig
+or run `zig build testprefix-all` to run all tests of that folder
+```
+
 # Usage
-this is licensed Public Domain or BSD-0 or MIT. Use it to your liking!
+this is Public Domain feel free to use it!
 
 # Performance
 - it gets slow with a lot of dependencies
