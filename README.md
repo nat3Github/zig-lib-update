@@ -27,7 +27,7 @@ const deps: []const update.GitDependency = &.{
         .branch = "main",
     },
     .{
-        // update lib-pffft
+        // update osmr
         .url = "https://github.com/nat3Github/zig-lib-osmr",
         .branch = "zig",
     },
