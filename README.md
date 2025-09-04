@@ -38,11 +38,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    if (update.updateDependencies(b, deps, .{
-        .name = "update",
-        .optimize = optimize,
-        .target = target,
-    })) return;
+    if (update.updateDependencies(b, deps)) return;
 ```
 
 
