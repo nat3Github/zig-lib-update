@@ -10,14 +10,14 @@ pub fn get_hash(alloc: Allocator, url: []const u8, branch: []const u8) ![]const 
     var tokenizer = std.mem.tokenizeAny(u8, dat, "\r\n");
     var hash: []const u8 = "";
     const refs_heads = "refs/heads/";
-    var arlist = std.ArrayList([]const u8).init(alloc);
-    defer arlist.deinit();
+    var arlist = std.ArrayList([]const u8){};
+    defer arlist.deinit(alloc);
     while (tokenizer.next()) |token| {
         hash = token[0..40];
         var ref = std.mem.trim(u8, token[40..], " \t");
         if (std.ascii.startsWithIgnoreCase(ref, refs_heads)) ref = ref[refs_heads.len..];
         if (std.mem.eql(u8, branch, ref)) return alloc.dupe(u8, hash);
-        try arlist.append(ref);
+        try arlist.append(alloc, ref);
     }
     const branches = arlist.items;
     std.log.err("url: {s} BRANCH: '{s}' NOT FOUND", .{ url, branch });
@@ -78,15 +78,15 @@ pub fn main() !void {
     defer arena.deinit();
     const alloc = arena.allocator();
     const Deps = std.ArrayList(GitDependency);
-    var deps = Deps.init(alloc);
-    defer deps.deinit();
+    var deps = Deps{};
+    defer deps.deinit(alloc);
     var it = try std.process.ArgIterator.initWithAllocator(alloc);
     _ = it.next(); // skip programm name
     while (it.next()) |s| {
         var d: GitDependency = undefined;
         d.url = s;
         d.branch = it.next() orelse return error.ParseError;
-        try deps.append(d);
+        try deps.append(alloc, d);
     }
     try update_dependency(alloc, deps.items);
 }
