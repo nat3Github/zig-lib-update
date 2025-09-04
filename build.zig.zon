@@ -1,7 +1,7 @@
 .{
     .fingerprint = 0xf49f694ef9080033,
     .name = .update_tool,
-    .version = "0.0.0",
+    .version = "1.0.0",
     .minimum_zig_version = "0.14.1",
     .dependencies = .{},
     .paths = .{

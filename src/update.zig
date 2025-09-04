@@ -99,21 +99,27 @@ pub fn main() !void {
 /// if (updateDependencies(...)) return;
 /// in your build.zig file and place it at the top of you build fn!
 /// Then, if you pass -Dupdate the build script will only do the updating and not error on missing dependencies in the rest of the build script!
-pub fn updateDependencies(b: *std.Build, dependencies: []const GitDependency, options: std.Build.ExecutableOptions) bool {
-    var opts = options;
+pub fn updateDependencies(b: *std.Build, dependencies: []const GitDependency) bool {
     const dep = b.dependency("update_tool", .{
         // .optimize = opts.optimize,
         // .target = opts.target,
     });
-    opts.root_source_file = dep.path("src/update.zig");
-    const build_exe = b.addExecutable(opts);
+    const mod = b.createModule(.{
+        .root_source_file = dep.path("src/update.zig"),
+        .optimize = .Debug,
+        .target = b.graph.host,
+    });
+    const build_exe = b.addExecutable(.{
+        .name = "update_tool_exe",
+        .root_module = mod,
+    });
     const run_step = b.addRunArtifact(build_exe);
     for (dependencies) |d| {
         run_step.addArg(d.url);
         run_step.addArg(d.branch);
     }
     run_step.step.dependOn(&build_exe.step);
-    const upd = if (b.option(bool, opts.name, "breaks the build script and updates dependencies")) |x| x else false;
+    const upd = if (b.option(bool, "update", "breaks the build script and updates dependencies")) |x| x else false;
     if (upd) {
         b.getInstallStep().dependOn(&run_step.step);
     }
