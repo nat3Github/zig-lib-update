@@ -14,7 +14,7 @@
 ```zig
     .dependencies = .{
         // zig 0.15.1
-        update_tool = .{
+        .update_tool = .{
             .url = "git+https://github.com/nat3Github/zig-lib-update#a0ef597d694e1d5f9752841cbf737095bb9c4cf9",
             .hash = "update_tool-1.0.0-MwAI-VgaAAB2y3AVVByTm1A6kQhyGB-QzWhGObaJhaKY",
         },
