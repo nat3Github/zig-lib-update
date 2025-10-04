@@ -25,12 +25,18 @@ pub fn addTestFolder(b: *std.Build, test_folder_sub_path: []const u8, optimize: 
             for (modules) |m| {
                 mod.addImport(m.name, m.mod);
             }
+            const exe = b.addExecutable(.{
+                .root_module = mod,
+                .name = b.fmt("{s}", .{e.name}),
+            });
+            const exe_run = b.addRunArtifact(exe);
             const test_ = b.addTest(.{
                 .root_module = mod,
             });
             const run_ = b.addRunArtifact(test_);
             const step = b.step(b.fmt("{s}-{s}", .{ step_name, e.name }), b.fmt("run test for {s}", .{e.name}));
             step.dependOn(&run_.step);
+            step.dependOn(&exe_run.step);
             all_tests_step.dependOn(step);
         }
     }
