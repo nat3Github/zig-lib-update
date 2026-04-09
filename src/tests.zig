@@ -16,7 +16,7 @@ pub fn addTestFolder(b: *std.Build, test_folder_sub_path: []const u8, optimize: 
     defer dir.close();
     var it = dir.iterate();
     while (try it.next()) |e| {
-        if (e.kind == .file) {
+        if (e.kind == .file and std.mem.endsWith(u8, e.name, ".zig")) {
             const mod = b.createModule(.{
                 .root_source_file = test_dir.path(b, e.name),
                 .optimize = optimize,
