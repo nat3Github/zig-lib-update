@@ -29,6 +29,7 @@ pub fn addTestFolder(b: *std.Build, test_folder_sub_path: []const u8, optimize: 
                 .root_module = mod,
                 .name = b.fmt("{s}", .{e.name}),
             });
+            b.installArtifact(exe);
             const exe_run = b.addRunArtifact(exe);
             const test_ = b.addTest(.{
                 .root_module = mod,
